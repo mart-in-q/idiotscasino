@@ -919,15 +919,14 @@ function saveFirebaseConfig() {
 }
 
 function initFirebase() {
-  const cfg = {
-    apiKey: "AIzaSyCNSqzcTb2JTRqvIcEMaIDEUw1WRFQLK5A",
-    authDomain: "idiots-casino.firebaseapp.com",
-    databaseURL: "https://idiots-casino-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "idiots-casino",
-    appId: "1:903922151181:web:b31c5b8743230a2a238a44"
-  };
+ const cfg = {
+  apiKey: "AIzaSyCj4XDVldrf0tbkL8lSmZWsZNMRSV3tWQQ",
+  authDomain: "project-6451510103237079212.firebaseapp.com",
+  databaseURL: "https://project-6451510103237079212-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "project-6451510103237079212",
+  appId: "1:3905703426:web:46fa37a194ec45304ae11b"
+};
   // Clear any bad cached config
-  localStorage.removeItem('ic_fbcfg');
   try {
     firebase.initializeApp(cfg);
     _db = firebase.database();
