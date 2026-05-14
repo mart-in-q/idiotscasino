@@ -526,6 +526,20 @@ input,select{font-family:'DM Sans',sans-serif;}
       <div class="auth-form" id="loginForm">
         <div class="field"><label>Email</label><input class="inp" id="lEmail" type="email" placeholder="your@email.com"></div>
         <div class="field"><label>Password</label><input class="inp" id="lPass" type="password" placeholder="••••••••"></div>
+        <div style="text-align:right;margin-top:-6px;">
+  <button
+    onclick="forgotPassword()"
+    style="
+      background:none;
+      border:none;
+      color:var(--green);
+      cursor:pointer;
+      font-size:.72rem;
+      font-family:'Space Mono',monospace;
+    ">
+    Forgot Password?
+  </button>
+</div>
         <div class="auth-msg" id="lMsg"></div>
         <button class="btn-auth" onclick="doLogin()">🎰 ENTER CASINO</button>
       </div>
@@ -1239,7 +1253,23 @@ async function doLogin() {
   const msg = document.getElementById('lMsg');
   msg.textContent = '';
   if (!email || !pass) { msg.textContent = 'Fill in all fields.'; return; }
-  try { await _auth.signInWithEmailAndPassword(email, pass); }
+  try {
+  const cred = await _auth.signInWithEmailAndPassword(email, pass);
+
+  if (!cred.user.emailVerified) {
+    await _auth.signOut();
+    msg.textContent = 'Please verify your Gmail before logging in.';
+    return;
+  }
+
+} catch(e) {
+  msg.textContent =
+    e.code==='auth/wrong-password'
+    ?'Wrong password.'
+    :e.code==='auth/user-not-found'
+    ?'Account not found.'
+    :e.message;
+}
   catch(e) { msg.textContent = e.code==='auth/wrong-password'?'Wrong password.':e.code==='auth/user-not-found'?'Account not found.':e.message; }
 }
 async function doSignup() {
@@ -1255,6 +1285,9 @@ async function doSignup() {
   if (snap.exists()) { msg.textContent='Username taken.'; return; }
   try {
     const cred = await _auth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.sendEmailVerification();
+
+alert('📧 Verification email sent! Please check your Gmail before logging in.');
     _uid = cred.user.uid;
     const isOwner = email===OWNER_EMAIL;
     _userData = { username:uname, email, balance:isOwner?INF:START_BAL, wins:0, losses:0, bigWin:0, wagered:0, txs:[],
@@ -2421,6 +2454,21 @@ function flipCoin(choice){
 renderDie('die1',1);renderDie('die2',6);
 document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 document.getElementById('sPass').addEventListener('keydown',e=>{if(e.key==='Enter')doSignup();});
+  async function forgotPassword() {
+  const email = document.getElementById('lEmail').value.trim();
+
+  if (!email) {
+    alert('Enter your email first.');
+    return;
+  }
+
+  try {
+    await _auth.sendPasswordResetEmail(email);
+    alert('📧 Password reset email sent!');
+  } catch (e) {
+    alert(e.message);
+  }
+}
 document.getElementById('chatInp').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
 
 function bootApp(){
