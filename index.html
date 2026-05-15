@@ -1294,7 +1294,9 @@ alert('📧 Verification email sent! Please check your Gmail before logging in.'
     await _db.ref('users/'+_uid).set(_userData);
     await _db.ref('usernames/'+uname.toLowerCase()).set(_uid);
     _username = uname;
-    enterApp();
+    // Replace enterApp() at the end of doSignup try block with:
+await _auth.signOut();
+document.getElementById('sMsg').textContent = '✅ Account created! Check your email to verify before logging in.';
   } catch(e) { msg.textContent = e.code==='auth/email-already-in-use'?'Email already registered.':e.message; }
 }
 async function doLogout() {
