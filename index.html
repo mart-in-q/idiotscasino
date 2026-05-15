@@ -1286,7 +1286,7 @@ async function doSignup() {
     const cred = await _auth.createUserWithEmailAndPassword(email, pass);
     await cred.user.sendEmailVerification();
 
-alert('📧 Verification email sent! Please check your Gmail before logging in.');
+alert('📧 Verification email sent! Please check your Gmail before logging in.(also the spam folder)');
     _uid = cred.user.uid;
     const isOwner = email===OWNER_EMAIL;
     _userData = { username:uname, email, balance:isOwner?INF:START_BAL, wins:0, losses:0, bigWin:0, wagered:0, txs:[],
@@ -1296,7 +1296,7 @@ alert('📧 Verification email sent! Please check your Gmail before logging in.'
     _username = uname;
     // Replace enterApp() at the end of doSignup try block with:
 await _auth.signOut();
-document.getElementById('sMsg').textContent = '✅ Account created! Check your email to verify before logging in.';
+document.getElementById('sMsg').textContent = '✅ Account created! Check your email to verify before logging in.(also the spam folder)';
   } catch(e) { msg.textContent = e.code==='auth/email-already-in-use'?'Email already registered.':e.message; }
 }
 async function doLogout() {
