@@ -1270,7 +1270,6 @@ async function doLogin() {
     ?'Account not found.'
     :e.message;
 }
-  catch(e) { msg.textContent = e.code==='auth/wrong-password'?'Wrong password.':e.code==='auth/user-not-found'?'Account not found.':e.message; }
 }
 async function doSignup() {
   const uname = document.getElementById('sUser').value.trim();
