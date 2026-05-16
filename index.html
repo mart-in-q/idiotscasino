@@ -1209,9 +1209,10 @@ function initFirebase() {
     appId: "1:3905703426:web:46fa37a194ec45304ae11b"
   };
   try {
-    firebase.initializeApp(cfg);
-    _db = firebase.database();
-    _auth = firebase.auth();
+firebase.initializeApp(cfg);
+_db = firebase.database();
+_auth = firebase.auth();
+_auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     document.getElementById('setupOverlay').classList.add('hidden');
     setupAuthListener();
     return true;
