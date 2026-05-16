@@ -1252,22 +1252,20 @@ async function doLogin() {
   msg.textContent = '';
   if (!email || !pass) { msg.textContent = 'Fill in all fields.'; return; }
   try {
-  const cred = await _auth.signInWithEmailAndPassword(email, pass);
-
-  if (!cred.user.emailVerified) {
-    await _auth.signOut();
-    msg.textContent = 'Please verify your Gmail before logging in.';
-    return;
+    const cred = await _auth.signInWithEmailAndPassword(email, pass);
+    if (!cred.user.emailVerified) {
+      await _auth.signOut();
+      msg.textContent = 'Please verify your email before logging in.';
+      return;
+    }
+    // onAuthStateChanged handles enterApp()
+  } catch(e) {
+    msg.textContent =
+      e.code === 'auth/wrong-password' ? 'Wrong password.' :
+      e.code === 'auth/user-not-found' ? 'Account not found.' :
+      e.code === 'auth/invalid-credential' ? 'Invalid email or password.' :
+      e.message;
   }
-
-} catch(e) {
-  msg.textContent =
-    e.code==='auth/wrong-password'
-    ?'Wrong password.'
-    :e.code==='auth/user-not-found'
-    ?'Account not found.'
-    :e.message;
-}
 }
 async function doSignup() {
   const uname = document.getElementById('sUser').value.trim();
