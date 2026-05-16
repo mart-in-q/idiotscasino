@@ -1152,6 +1152,10 @@ input,select{font-family:'DM Sans',sans-serif;}
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-admin red" id="maintBtn" onclick="toggleMaintenance()">🔧 MAINT OFF</button>
       </div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+  <button class="btn-admin red" id="maintBtn" onclick="toggleMaintenance()">🔧 MAINT OFF</button>
+  <button class="btn-admin red" onclick="adminNuclearReset()">☢️ RESET ALL</button>
+</div>
       <div class="admin-result" id="adminEconMsg"></div>
     </div>
   </div>
@@ -1681,6 +1685,28 @@ function adminBroadcast(){const text=document.getElementById('adminBroadcast').v
 function adminClearChat(){if(!confirm('Clear ALL chat?'))return;_db.ref('chat').remove();document.getElementById('adminChatMsg').textContent='✅ Cleared.';}
 function toggleSlowMode(){const n=!_slowMode;_db.ref('config/slowMode').set(n);document.getElementById('adminChatMsg').textContent=`✅ Slow mode ${n?'enabled':'disabled'}.`;setTimeout(()=>document.getElementById('adminChatMsg').textContent='',3000);}
 function toggleMaintenance(){const n=!_maintenanceMode;_db.ref('config/maintenance').set(n);document.getElementById('adminEconMsg').textContent=`✅ Maintenance ${n?'ON':'OFF'}.`;setTimeout(()=>document.getElementById('adminEconMsg').textContent='',3000);}
+  async function adminNuclearReset() {
+  if (!_userData.isOwner) return;
+  if (!confirm('DELETE ALL USER DATA? This cannot be undone!')) return;
+  if (!confirm('Are you ABSOLUTELY sure? Type OK then confirm.')) return;
+
+  await _db.ref('/').remove();
+
+  const isOwner = true;
+  _userData = {
+    username: _username, email: _userData.email,
+    balance: INF, wins: 0, losses: 0, bigWin: 0,
+    wagered: 0, txs: [], isOwner, joined: Date.now(),
+    xp: 0, level: 1, achievements: {}, loginStreak: 0, lastLogin: 0
+  };
+  await _db.ref('users/' + _uid).set(_userData);
+  await _db.ref('usernames/' + _username.toLowerCase()).set(_uid);
+
+  toast('☢️ Full reset done!', 'win');
+  updateUI();
+}
+
+async function adminRain(){
 async function adminRain(){
   const amount=parseInt(document.getElementById('adminRainAmt').value);if(!amount||amount<1)return;
   await _db.ref('rain').push({amount,ts:Date.now(),by:_username});
